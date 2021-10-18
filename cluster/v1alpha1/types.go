@@ -418,3 +418,60 @@ type PlacementDecisionList struct {
 	// Items is a list of PlacementDecision.
 	Items []PlacementDecision `json:"items"`
 }
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:resource:scope="Namespaced"
+// +kubebuilder:subresource:status
+
+// ManagedClusterScore represents a scalable value (aka score) of one managed cluster.
+// Each ManagedClusterScore only represents the score for one specific calculator type.
+// ManagedClusterScore is a namesapce scoped resource.
+//
+// The ManagedClusterScore name should follow the format {cluster name}-{calculator name}.
+// For example, a calculator named ResourceAllocatableMemory can calculate the totale allocatable memory
+// of one cluster.
+// So for cluster1, the corresponding ManagedClusterScore name is cluster1-resourceallocatablememory.
+type ManagedClusterScore struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	// Status represents the status of the ManagedClusterScore.
+	// +optional
+	Status ManagedClusterScoreStatus `json:"status,omitempty"`
+}
+
+// ManagedClusterScoreStatus represents the current status of ManagedClusterScore.
+type ManagedClusterScoreStatus struct {
+	// Conditions contains the different condition statuses for this managed cluster score.
+	Conditions []ManagedClusterScoreCondition `json:"conditions"`
+
+	// Score contains a scalable value of this managed cluster.
+	Score int64 `json:"score,omitempty"`
+}
+
+// ManagedClusterScoreCondition represents the condition of ManagedClusterScore.
+type ManagedClusterScoreCondition struct {
+	metav1.Condition `json:",inline"`
+
+	// lastUpdateTime is the last time the statue score updated.
+	// +required
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Type=string
+	// +kubebuilder:validation:Format=date-time
+	LastUpdateTime metav1.Time `json:"lastUpdateTime" protobuf:"bytes,4,opt,name=lastTransitionTime"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ManagedClusterScoreList is a collection of managed cluster score.
+type ManagedClusterScoreList struct {
+	metav1.TypeMeta `json:",inline"`
+	// Standard list metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
+	// +optional
+	metav1.ListMeta `json:"metadata,omitempty"`
+
+	// Items is a list of managed clusters
+	Items []ManagedClusterScore `json:"items"`
+}

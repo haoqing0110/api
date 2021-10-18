@@ -105,41 +105,6 @@ type ManagedClusterStatus struct {
 	ClusterClaims []ManagedClusterClaim `json:"clusterClaims,omitempty"`
 }
 
-// TODO
-type ManagedClusterExtra struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	// Spec represents TODO
-	Spec ManagedClusterExtraSpec `json:"spec"`
-
-	// Status represents TODO
-	// +optional
-	Status ManagedClusterExtraStatus `json:"status,omitempty"`
-}
-
-type ManagedClusterExtraSpec struct {
-	// TODO
-	// +optional
-	Collectors ManagedClusterExtraCollectors `json:"collectors,omitempty"`
-}
-
-type ManagedClusterExtraCollectors struct {
-	// TODO
-	// +optional
-	Enable bool `json:"enable,omitempty"`
-
-	// TODO
-	// +optional
-	Configs map[string]ManagedClusterExtraCollectorConfig `json:"configs,omitempty"`
-}
-
-type ManagedClusterExtraCollectorConfig struct {
-	Threadhold string `json:"threadhold,omitempty"`
-}
-
-type ManagedClusterExtraStatus map[string]ResourceList
-
 // ManagedClusterVersion represents version information about the managed cluster.
 // TODO add managed agent versions
 type ManagedClusterVersion struct {
