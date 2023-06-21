@@ -18,6 +18,7 @@ work/v1 \
 work/v1alpha1 \
 operator/v1 \
 addon/v1alpha1 \
+duck/v1alpha1 \
 "
 
 API_PACKAGES="\
@@ -29,4 +30,5 @@ open-cluster-management.io/api/work/v1,\
 open-cluster-management.io/api/work/v1alpha1,\
 open-cluster-management.io/api/operator/v1,\
 open-cluster-management.io/api/addon/v1alpha1\
+open-cluster-management.io/api/duck/v1alpha1\
 "
