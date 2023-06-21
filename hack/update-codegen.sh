@@ -55,3 +55,12 @@ for group in addon; do
     --go-header-file ${SCRIPT_ROOT}/hack/boilerplate.txt \
     ${verify}
 done
+
+for group in duck; do
+  bash ${CODEGEN_PKG}/generate-groups.sh "client,lister,informer" \
+    open-cluster-management.io/api/client/${group} \
+    open-cluster-management.io/api \
+    "${group}:v1alpha1" \
+    --go-header-file ${SCRIPT_ROOT}/hack/boilerplate.txt \
+    ${verify}
+done
