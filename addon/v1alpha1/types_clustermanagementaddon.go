@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	duckv1alpha1 "open-cluster-management.io/api/duck/v1alpha1"
 )
 
 // +genclient
@@ -34,6 +35,8 @@ type ClusterManagementAddOn struct {
 
 // ClusterManagementAddOnSpec provides information for the add-on.
 type ClusterManagementAddOnSpec struct {
+	// +optional
+	PlacementRefs []duckv1alpha1.PlacementRefs `json:"placementRefs,omitempty"`
 	// addOnMeta is a reference to the metadata information for the add-on.
 	// +optional
 	AddOnMeta AddOnMeta `json:"addOnMeta,omitempty"`

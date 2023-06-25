@@ -17,7 +17,7 @@ import (
 // UpgradableTypesGetter has a method to return a UpgradableTypeInterface.
 // A group's client should implement this interface.
 type UpgradableTypesGetter interface {
-	UpgradableTypes(namespace string) UpgradableTypeInterface
+	UpgradableTypes() UpgradableTypeInterface
 }
 
 // UpgradableTypeInterface has methods to work with UpgradableType resources.
@@ -36,14 +36,12 @@ type UpgradableTypeInterface interface {
 // upgradableTypes implements UpgradableTypeInterface
 type upgradableTypes struct {
 	client rest.Interface
-	ns     string
 }
 
 // newUpgradableTypes returns a UpgradableTypes
-func newUpgradableTypes(c *DuckV1alpha1Client, namespace string) *upgradableTypes {
+func newUpgradableTypes(c *DuckV1alpha1Client) *upgradableTypes {
 	return &upgradableTypes{
 		client: c.RESTClient(),
-		ns:     namespace,
 	}
 }
 
@@ -51,7 +49,6 @@ func newUpgradableTypes(c *DuckV1alpha1Client, namespace string) *upgradableType
 func (c *upgradableTypes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.UpgradableType, err error) {
 	result = &v1alpha1.UpgradableType{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -68,7 +65,6 @@ func (c *upgradableTypes) List(ctx context.Context, opts v1.ListOptions) (result
 	}
 	result = &v1alpha1.UpgradableTypeList{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -85,7 +81,6 @@ func (c *upgradableTypes) Watch(ctx context.Context, opts v1.ListOptions) (watch
 	}
 	opts.Watch = true
 	return c.client.Get().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -96,7 +91,6 @@ func (c *upgradableTypes) Watch(ctx context.Context, opts v1.ListOptions) (watch
 func (c *upgradableTypes) Create(ctx context.Context, upgradableType *v1alpha1.UpgradableType, opts v1.CreateOptions) (result *v1alpha1.UpgradableType, err error) {
 	result = &v1alpha1.UpgradableType{}
 	err = c.client.Post().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(upgradableType).
@@ -109,7 +103,6 @@ func (c *upgradableTypes) Create(ctx context.Context, upgradableType *v1alpha1.U
 func (c *upgradableTypes) Update(ctx context.Context, upgradableType *v1alpha1.UpgradableType, opts v1.UpdateOptions) (result *v1alpha1.UpgradableType, err error) {
 	result = &v1alpha1.UpgradableType{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		Name(upgradableType.Name).
 		VersionedParams(&opts, scheme.ParameterCodec).
@@ -122,7 +115,6 @@ func (c *upgradableTypes) Update(ctx context.Context, upgradableType *v1alpha1.U
 // Delete takes name of the upgradableType and deletes it. Returns an error if one occurs.
 func (c *upgradableTypes) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		Name(name).
 		Body(&opts).
@@ -137,7 +129,6 @@ func (c *upgradableTypes) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		VersionedParams(&listOpts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -150,7 +141,6 @@ func (c *upgradableTypes) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 func (c *upgradableTypes) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.UpgradableType, err error) {
 	result = &v1alpha1.UpgradableType{}
 	err = c.client.Patch(pt).
-		Namespace(c.ns).
 		Resource("upgradabletypes").
 		Name(name).
 		SubResource(subresources...).

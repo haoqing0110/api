@@ -17,7 +17,6 @@ import (
 // FakeUpgradableTypes implements UpgradableTypeInterface
 type FakeUpgradableTypes struct {
 	Fake *FakeDuckV1alpha1
-	ns   string
 }
 
 var upgradabletypesResource = schema.GroupVersionResource{Group: "duck.open-cluster-management.io", Version: "v1alpha1", Resource: "upgradabletypes"}
@@ -27,8 +26,7 @@ var upgradabletypesKind = schema.GroupVersionKind{Group: "duck.open-cluster-mana
 // Get takes name of the upgradableType, and returns the corresponding upgradableType object, and an error if there is any.
 func (c *FakeUpgradableTypes) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.UpgradableType, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(upgradabletypesResource, c.ns, name), &v1alpha1.UpgradableType{})
-
+		Invokes(testing.NewRootGetAction(upgradabletypesResource, name), &v1alpha1.UpgradableType{})
 	if obj == nil {
 		return nil, err
 	}
@@ -38,8 +36,7 @@ func (c *FakeUpgradableTypes) Get(ctx context.Context, name string, options v1.G
 // List takes label and field selectors, and returns the list of UpgradableTypes that match those selectors.
 func (c *FakeUpgradableTypes) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.UpgradableTypeList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(upgradabletypesResource, upgradabletypesKind, c.ns, opts), &v1alpha1.UpgradableTypeList{})
-
+		Invokes(testing.NewRootListAction(upgradabletypesResource, upgradabletypesKind, opts), &v1alpha1.UpgradableTypeList{})
 	if obj == nil {
 		return nil, err
 	}
@@ -60,15 +57,13 @@ func (c *FakeUpgradableTypes) List(ctx context.Context, opts v1.ListOptions) (re
 // Watch returns a watch.Interface that watches the requested upgradableTypes.
 func (c *FakeUpgradableTypes) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(upgradabletypesResource, c.ns, opts))
-
+		InvokesWatch(testing.NewRootWatchAction(upgradabletypesResource, opts))
 }
 
 // Create takes the representation of a upgradableType and creates it.  Returns the server's representation of the upgradableType, and an error, if there is any.
 func (c *FakeUpgradableTypes) Create(ctx context.Context, upgradableType *v1alpha1.UpgradableType, opts v1.CreateOptions) (result *v1alpha1.UpgradableType, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(upgradabletypesResource, c.ns, upgradableType), &v1alpha1.UpgradableType{})
-
+		Invokes(testing.NewRootCreateAction(upgradabletypesResource, upgradableType), &v1alpha1.UpgradableType{})
 	if obj == nil {
 		return nil, err
 	}
@@ -78,8 +73,7 @@ func (c *FakeUpgradableTypes) Create(ctx context.Context, upgradableType *v1alph
 // Update takes the representation of a upgradableType and updates it. Returns the server's representation of the upgradableType, and an error, if there is any.
 func (c *FakeUpgradableTypes) Update(ctx context.Context, upgradableType *v1alpha1.UpgradableType, opts v1.UpdateOptions) (result *v1alpha1.UpgradableType, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(upgradabletypesResource, c.ns, upgradableType), &v1alpha1.UpgradableType{})
-
+		Invokes(testing.NewRootUpdateAction(upgradabletypesResource, upgradableType), &v1alpha1.UpgradableType{})
 	if obj == nil {
 		return nil, err
 	}
@@ -89,14 +83,13 @@ func (c *FakeUpgradableTypes) Update(ctx context.Context, upgradableType *v1alph
 // Delete takes name of the upgradableType and deletes it. Returns an error if one occurs.
 func (c *FakeUpgradableTypes) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(upgradabletypesResource, c.ns, name, opts), &v1alpha1.UpgradableType{})
-
+		Invokes(testing.NewRootDeleteActionWithOptions(upgradabletypesResource, name, opts), &v1alpha1.UpgradableType{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeUpgradableTypes) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(upgradabletypesResource, c.ns, listOpts)
+	action := testing.NewRootDeleteCollectionAction(upgradabletypesResource, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.UpgradableTypeList{})
 	return err
@@ -105,8 +98,7 @@ func (c *FakeUpgradableTypes) DeleteCollection(ctx context.Context, opts v1.Dele
 // Patch applies the patch and returns the patched upgradableType.
 func (c *FakeUpgradableTypes) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.UpgradableType, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(upgradabletypesResource, c.ns, name, pt, data, subresources...), &v1alpha1.UpgradableType{})
-
+		Invokes(testing.NewRootPatchSubresourceAction(upgradabletypesResource, name, pt, data, subresources...), &v1alpha1.UpgradableType{})
 	if obj == nil {
 		return nil, err
 	}

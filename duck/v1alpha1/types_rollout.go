@@ -2,9 +2,17 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"knative.dev/pkg/apis"
+	"knative.dev/pkg/apis/duck"
+	"knative.dev/pkg/kmeta"
 )
 
+type Upgradable []PlacementRefs
+
 // +genclient
+// +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type UpgradableType struct {
@@ -19,7 +27,7 @@ type UpgradableType struct {
 // UpgradableSpec contains Spec of the UpgradableType object
 type UpgradableSpec struct {
 	// +optional
-	PlacementRefs []PlacementRefs `json:"placementRefs,omitempty"`
+	PlacementRefs Upgradable `json:"placementRefs,omitempty"`
 }
 
 type PlacementRefs struct {
@@ -107,5 +115,34 @@ type UpgradableTypeList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 
 	// Items is a list of AddOnPlacementScore
-	Items []UpgradableTypeList `json:"items"`
+	Items []UpgradableType `json:"items"`
+}
+
+// Ensure WithPod satisfies apis.Listable
+var _ apis.Listable = (*UpgradableType)(nil)
+
+// Ensure WithPod satisfies apis.Listable
+var _ kmeta.OwnerRefable = (*UpgradableType)(nil)
+
+// TODO(mattmoor): Move to tests
+var _ duck.Populatable = (*UpgradableType)(nil)
+var _ duck.Implementable = (*Upgradable)(nil)
+
+// GetFullType implements duck.Implementable
+func (_ *Upgradable) GetFullType() duck.Populatable {
+	return &UpgradableType{}
+}
+
+func (t *UpgradableType) GetGroupVersionKind() schema.GroupVersionKind {
+	return t.TypeMeta.GroupVersionKind()
+}
+
+// GetListType implements apis.Listable
+func (r *UpgradableType) GetListType() runtime.Object {
+	return &UpgradableTypeList{}
+}
+
+// Populate implements duck.Populatable
+func (t *UpgradableType) Populate() {
+	t.Spec.PlacementRefs = []PlacementRefs{}
 }

@@ -15,8 +15,9 @@ type UpgradableTypeLister interface {
 	// List lists all UpgradableTypes in the indexer.
 	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1alpha1.UpgradableType, err error)
-	// UpgradableTypes returns an object that can list and get UpgradableTypes.
-	UpgradableTypes(namespace string) UpgradableTypeNamespaceLister
+	// Get retrieves the UpgradableType from the index for a given name.
+	// Objects returned here must be treated as read-only.
+	Get(name string) (*v1alpha1.UpgradableType, error)
 	UpgradableTypeListerExpansion
 }
 
@@ -38,41 +39,9 @@ func (s *upgradableTypeLister) List(selector labels.Selector) (ret []*v1alpha1.U
 	return ret, err
 }
 
-// UpgradableTypes returns an object that can list and get UpgradableTypes.
-func (s *upgradableTypeLister) UpgradableTypes(namespace string) UpgradableTypeNamespaceLister {
-	return upgradableTypeNamespaceLister{indexer: s.indexer, namespace: namespace}
-}
-
-// UpgradableTypeNamespaceLister helps list and get UpgradableTypes.
-// All objects returned here must be treated as read-only.
-type UpgradableTypeNamespaceLister interface {
-	// List lists all UpgradableTypes in the indexer for a given namespace.
-	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.UpgradableType, err error)
-	// Get retrieves the UpgradableType from the indexer for a given namespace and name.
-	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.UpgradableType, error)
-	UpgradableTypeNamespaceListerExpansion
-}
-
-// upgradableTypeNamespaceLister implements the UpgradableTypeNamespaceLister
-// interface.
-type upgradableTypeNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all UpgradableTypes in the indexer for a given namespace.
-func (s upgradableTypeNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.UpgradableType, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.UpgradableType))
-	})
-	return ret, err
-}
-
-// Get retrieves the UpgradableType from the indexer for a given namespace and name.
-func (s upgradableTypeNamespaceLister) Get(name string) (*v1alpha1.UpgradableType, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
+// Get retrieves the UpgradableType from the index for a given name.
+func (s *upgradableTypeLister) Get(name string) (*v1alpha1.UpgradableType, error) {
+	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
 	}

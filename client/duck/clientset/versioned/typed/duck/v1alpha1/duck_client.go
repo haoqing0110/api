@@ -20,8 +20,8 @@ type DuckV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *DuckV1alpha1Client) UpgradableTypes(namespace string) UpgradableTypeInterface {
-	return newUpgradableTypes(c, namespace)
+func (c *DuckV1alpha1Client) UpgradableTypes() UpgradableTypeInterface {
+	return newUpgradableTypes(c)
 }
 
 // NewForConfig creates a new DuckV1alpha1Client for the given config.

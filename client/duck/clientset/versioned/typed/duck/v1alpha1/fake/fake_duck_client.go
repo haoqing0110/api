@@ -12,8 +12,8 @@ type FakeDuckV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeDuckV1alpha1) UpgradableTypes(namespace string) v1alpha1.UpgradableTypeInterface {
-	return &FakeUpgradableTypes{c, namespace}
+func (c *FakeDuckV1alpha1) UpgradableTypes() v1alpha1.UpgradableTypeInterface {
+	return &FakeUpgradableTypes{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

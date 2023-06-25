@@ -5,7 +5,3 @@ package v1alpha1
 // UpgradableTypeListerExpansion allows custom methods to be added to
 // UpgradableTypeLister.
 type UpgradableTypeListerExpansion interface{}
-
-// UpgradableTypeNamespaceListerExpansion allows custom methods to be added to
-// UpgradableTypeNamespaceLister.
-type UpgradableTypeNamespaceListerExpansion interface{}

@@ -25,5 +25,5 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // UpgradableTypes returns a UpgradableTypeInformer.
 func (v *version) UpgradableTypes() UpgradableTypeInformer {
-	return &upgradableTypeInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+	return &upgradableTypeInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }
