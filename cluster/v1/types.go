@@ -32,14 +32,14 @@ import (
 // the credential to the hub cluster to use against the kube-apiserver of the ManagedCluster.
 type ManagedCluster struct {
 	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// Spec represents a desired configuration for the agent on the managed cluster.
-	Spec ManagedClusterSpec `json:"spec"`
+	Spec ManagedClusterSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
 
 	// Status represents the current status of joined managed cluster
 	// +optional
-	Status ManagedClusterStatus `json:"status,omitempty"`
+	Status ManagedClusterStatus `json:"status,omitempty" protobuf:"bytes,3,opt,name=status"`
 }
 
 // ManagedClusterSpec provides the information to securely connect to a remote server
@@ -48,7 +48,7 @@ type ManagedClusterSpec struct {
 	// ManagedClusterClientConfigs represents a list of the apiserver address of the managed cluster.
 	// If it is empty, the managed cluster has no accessible address for the hub to connect with it.
 	// +optional
-	ManagedClusterClientConfigs []ClientConfig `json:"managedClusterClientConfigs,omitempty"`
+	ManagedClusterClientConfigs []ClientConfig `json:"managedClusterClientConfigs,omitempty" protobuf:"bytes,1,opt,name=managedClusterClientConfigs"`
 
 	// hubAcceptsClient represents that hub accepts the joining of Klusterlet agent on
 	// the managed cluster with the hub. The default value is false, and can only be set
@@ -60,19 +60,19 @@ type ManagedClusterSpec struct {
 	// When the value is set to false, the namespace representing the managed cluster is
 	// deleted.
 	// +required
-	HubAcceptsClient bool `json:"hubAcceptsClient"`
+	HubAcceptsClient bool `json:"hubAcceptsClient" protobuf:"bytes,2,opt,name=hubAcceptsClient"`
 
 	// LeaseDurationSeconds is used to coordinate the lease update time of Klusterlet agents on the managed cluster.
 	// If its value is zero, the Klusterlet agent will update its lease every 60 seconds by default
 	// +optional
 	// +kubebuilder:default=60
-	LeaseDurationSeconds int32 `json:"leaseDurationSeconds,omitempty"`
+	LeaseDurationSeconds int32 `json:"leaseDurationSeconds,omitempty" protobuf:"bytes,3,opt,name=leaseDurationSeconds"`
 
 	// Taints is a property of managed cluster that allow the cluster to be repelled when scheduling.
 	// Taints, including 'ManagedClusterUnavailable' and 'ManagedClusterUnreachable', can not be added/removed by agent
 	// running on the managed cluster; while it's fine to add/remove other taints from either hub cluser or managed cluster.
 	// +optional
-	Taints []Taint `json:"taints,omitempty"`
+	Taints []Taint `json:"taints,omitempty" protobuf:"bytes,4,opt,name=taints"`
 }
 
 // ClientConfig represents the apiserver address of the managed cluster.
@@ -80,12 +80,12 @@ type ManagedClusterSpec struct {
 type ClientConfig struct {
 	// URL is the URL of apiserver endpoint of the managed cluster.
 	// +required
-	URL string `json:"url"`
+	URL string `json:"url" protobuf:"bytes,1,opt,name=url"`
 
 	// CABundle is the ca bundle to connect to apiserver of the managed cluster.
 	// System certs are used if it is not set.
 	// +optional
-	CABundle []byte `json:"caBundle,omitempty"`
+	CABundle []byte `json:"caBundle,omitempty" protobuf:"bytes,2,opt,name=caBundle"`
 }
 
 // The managed cluster this Taint is attached to has the "effect" on
@@ -97,21 +97,21 @@ type Taint struct {
 	// +kubebuilder:validation:Pattern=`^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$`
 	// +kubebuilder:validation:MaxLength=316
 	// +required
-	Key string `json:"key"`
+	Key string `json:"key" protobuf:"bytes,1,opt,name=key"`
 	// Value is the taint value corresponding to the taint key.
 	// +kubebuilder:validation:MaxLength=1024
 	// +optional
-	Value string `json:"value,omitempty"`
+	Value string `json:"value,omitempty" protobuf:"bytes,2,opt,name=value"`
 	// Effect indicates the effect of the taint on placements that do not tolerate the taint.
 	// Valid effects are NoSelect, PreferNoSelect and NoSelectIfNew.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum:=NoSelect;PreferNoSelect;NoSelectIfNew
 	// +required
-	Effect TaintEffect `json:"effect"`
+	Effect TaintEffect `json:"effect" protobuf:"bytes,3,opt,name=effect"`
 	// TimeAdded represents the time at which the taint was added.
 	// +nullable
 	// +required
-	TimeAdded metav1.Time `json:"timeAdded"`
+	TimeAdded metav1.Time `json:"timeAdded" protobuf:"bytes,4,opt,name=timeAdded"`
 }
 
 type TaintEffect string
@@ -120,14 +120,14 @@ const (
 	// TaintEffectNoSelect means placements are not allowed to select the cluster unless they tolerate the taint.
 	// The cluster will be removed from the placement cluster decisions if a placement has already selected
 	// this cluster.
-	TaintEffectNoSelect TaintEffect = "NoSelect"
+	TaintEffectNoSelect = TaintEffect("NoSelect")
 	// TaintEffectPreferNoSelect means the scheduler tries not to select the cluster, rather than prohibiting
 	// placements from selecting the cluster entirely.
-	TaintEffectPreferNoSelect TaintEffect = "PreferNoSelect"
+	TaintEffectPreferNoSelect = TaintEffect("PreferNoSelect")
 	// TaintEffectNoSelectIfNew means placements are not allowed to select the cluster unless
 	// 1) they tolerate the taint;
 	// 2) they have already had the cluster in their cluster decisions;
-	TaintEffectNoSelectIfNew TaintEffect = "NoSelectIfNew"
+	TaintEffectNoSelectIfNew = TaintEffect("NoSelectIfNew")
 )
 
 const (
@@ -144,17 +144,17 @@ const (
 // ManagedClusterStatus represents the current status of joined managed cluster.
 type ManagedClusterStatus struct {
 	// Conditions contains the different condition statuses for this managed cluster.
-	Conditions []metav1.Condition `json:"conditions"`
+	Conditions []metav1.Condition `json:"conditions" protobuf:"bytes,1,opt,name=conditions"`
 
 	// Capacity represents the total resource capacity from all nodeStatuses
 	// on the managed cluster.
-	Capacity ResourceList `json:"capacity,omitempty"`
+	Capacity ResourceList `json:"capacity,omitempty" protobuf:"bytes,2,opt,name=capacity"`
 
 	// Allocatable represents the total allocatable resources on the managed cluster.
-	Allocatable ResourceList `json:"allocatable,omitempty"`
+	Allocatable ResourceList `json:"allocatable,omitempty" protobuf:"bytes,3,opt,name=allocatable"`
 
 	// Version represents the kubernetes version of the managed cluster.
-	Version ManagedClusterVersion `json:"version,omitempty"`
+	Version ManagedClusterVersion `json:"version,omitempty" protobuf:"bytes,4,opt,name=version"`
 
 	// ClusterClaims represents cluster information that a managed cluster claims,
 	// for example a unique cluster identifier (id.k8s.io) and kubernetes version
@@ -162,7 +162,7 @@ type ManagedClusterStatus struct {
 	// cluster. The set of claims is not uniform across a fleet, some claims can be
 	// vendor or version specific and may not be included from all managed clusters.
 	// +optional
-	ClusterClaims []ManagedClusterClaim `json:"clusterClaims,omitempty"`
+	ClusterClaims []ManagedClusterClaim `json:"clusterClaims,omitempty" protobuf:"bytes,5,opt,name=clusterClaims"`
 }
 
 // ManagedClusterVersion represents version information about the managed cluster.
@@ -170,7 +170,7 @@ type ManagedClusterStatus struct {
 type ManagedClusterVersion struct {
 	// Kubernetes is the kubernetes version of managed cluster.
 	// +optional
-	Kubernetes string `json:"kubernetes,omitempty"`
+	Kubernetes string `json:"kubernetes,omitempty" protobuf:"bytes,1,opt,name=kubernetes"`
 }
 
 // ManagedClusterClaim represents a ClusterClaim collected from a managed cluster.
@@ -179,12 +179,12 @@ type ManagedClusterClaim struct {
 	// or customized name to identify the claim.
 	// +kubebuilder:validation:MaxLength=253
 	// +kubebuilder:validation:MinLength=1
-	Name string `json:"name,omitempty"`
+	Name string `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
 
 	// Value is a claim-dependent string
 	// +kubebuilder:validation:MaxLength=1024
 	// +kubebuilder:validation:MinLength=1
-	Value string `json:"value,omitempty"`
+	Value string `json:"value,omitempty" protobuf:"bytes,2,opt,name=value"`
 }
 
 const (
@@ -226,10 +226,10 @@ type ManagedClusterList struct {
 	// Standard list metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// Items is a list of managed clusters.
-	Items []ManagedCluster `json:"items"`
+	Items []ManagedCluster `json:"items" protobuf:"bytes,2,opt,name=items"`
 }
 
 const (
